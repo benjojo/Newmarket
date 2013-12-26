@@ -1,14 +1,12 @@
 package main
 
 import (
-	// "fmt"
 	"fmt"
 	"github.com/codegangsta/martini"
 	"github.com/nu7hatch/gouuid"
 	// "io"
 	"net"
 	"net/http"
-	"time"
 )
 
 type ConnectionSession struct {
@@ -28,13 +26,19 @@ func main() {
 	m.Run()
 }
 
-func StartSession(rw http.ResponseWriter, req *http.Request) string {
+func StartSession(rw http.ResponseWriter, req *http.Request, Sessions *[]ConnectionSession) string {
 	// Now we need to make a new session and store it in a KV DB
 	UpChan := make(chan []byte)
 	DownChan := make(chan []byte)
 	u, _ := uuid.NewV4()
-	WorkingSession := ConnectionSession{}
-	go TCPSocket(Session)
+	ustr := fmt.Sprintf("%s", u)
+	WorkingSession := ConnectionSession{
+		Token:    ustr,
+		UpChan:   UpChan,
+		DownChan: DownChan,
+	}
+	go TCPSocket(WorkingSession)
+	Sessions = append(Sessions, WorkingSession)
 }
 
 func UpPoll(conn net.Conn, UpChan chan []byte) {
