@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"fmt"
 	"github.com/codegangsta/martini"
+	"github.com/nu7hatch/gouuid"
 	// "io"
 	"net"
 	"net/http"
@@ -18,8 +19,10 @@ type ConnectionSession struct {
 
 func main() {
 	// Now that the TCP waiter is setup. lets start the HTTP sevrer
+	Sessions := make([]ConnectionSession, 0)
 	m := martini.Classic()
 	// m.Use(EnforceHTTPAuth)
+	m.Map(Sessions)
 	m.Get("/", Welcome)
 	m.Get("/init", StartSession)
 	m.Run()
@@ -27,6 +30,11 @@ func main() {
 
 func StartSession(rw http.ResponseWriter, req *http.Request) string {
 	// Now we need to make a new session and store it in a KV DB
+	UpChan := make(chan []byte)
+	DownChan := make(chan []byte)
+	u, _ := uuid.NewV4()
+	WorkingSession := ConnectionSession{}
+	go TCPSocket(Session)
 }
 
 func UpPoll(conn net.Conn, UpChan chan []byte) {
