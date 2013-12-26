@@ -15,18 +15,18 @@ type ConnectionSession struct {
 	DownChan chan []byte
 }
 
+var Sessions = make([]ConnectionSession, 0)
+
 func main() {
 	// Now that the TCP waiter is setup. lets start the HTTP sevrer
-	Sessions := make([]ConnectionSession, 0)
 	m := martini.Classic()
-	// m.Use(EnforceHTTPAuth)
-	m.Map(Sessions)
+	// m.Map(Sessions)
 	m.Get("/", Welcome)
 	m.Get("/init", StartSession)
 	m.Run()
 }
 
-func StartSession(rw http.ResponseWriter, req *http.Request, Sessions *[]ConnectionSession) string {
+func StartSession(rw http.ResponseWriter, req *http.Request) string {
 	// Now we need to make a new session and store it in a KV DB
 	UpChan := make(chan []byte)
 	DownChan := make(chan []byte)
@@ -39,6 +39,7 @@ func StartSession(rw http.ResponseWriter, req *http.Request, Sessions *[]Connect
 	}
 	go TCPSocket(WorkingSession)
 	Sessions = append(Sessions, WorkingSession)
+	return ustr
 }
 
 func UpPoll(conn net.Conn, UpChan chan []byte) {
