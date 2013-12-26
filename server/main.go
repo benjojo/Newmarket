@@ -23,6 +23,11 @@ func main() {
 	// m.Map(Sessions)
 	m.Get("/", Welcome)
 	m.Get("/init", StartSession)
+	/*
+		Okay so all I need to do now is make a m.get(/uplink/:id) and a post one too to get the data
+		You can apparently stream r.body. you can flush to the output as long as you DONT use martini's
+		fancy way of doing things and just write to the request in raw form.
+	*/
 	m.Run()
 }
 
@@ -74,12 +79,6 @@ func TCPSocket(Session ConnectionSession) {
 	}
 	go UpPoll(conn, UpChan)
 	go DownPoll(conn, DownChan)
-	/*
-		Okay so you need to first do somthing with that _ up there.
-		I think it will be best to move this to use one chan and just have a struct that can contain stuff
-		to move back and forward, that way everything can be streamlined into a multi connection system
-		thus making the system much more sane a reliable.
-	*/
 }
 
 func Welcome(rw http.ResponseWriter, req *http.Request) string {
