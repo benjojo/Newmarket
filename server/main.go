@@ -49,6 +49,7 @@ func DownPoll(conn net.Conn, DownChan chan []byte) {
 }
 
 func TCPSocket(Session ConnectionSession) {
+	<-Session.UpChan
 	UpChan := Session.UpChan
 	DownChan := Session.DownChan
 
