@@ -7,6 +7,7 @@ import (
 	// "io"
 	"net"
 	"net/http"
+	"time"
 )
 
 type ConnectionSession struct {
@@ -20,7 +21,12 @@ func main() {
 	m := martini.Classic()
 	// m.Use(EnforceHTTPAuth)
 	m.Get("/", Welcome)
+	m.Get("/init", StartSession)
 	m.Run()
+}
+
+func StartSession(rw http.ResponseWriter, req *http.Request) string {
+	// Now we need to make a new session and store it in a KV DB
 }
 
 func UpPoll(conn net.Conn, UpChan chan []byte) {
