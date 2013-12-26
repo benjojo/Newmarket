@@ -9,10 +9,13 @@ import (
 	"net/http"
 )
 
+type ConnectionSession struct {
+	Token    string
+	UpChan   chan []byte
+	DownChan chan []byte
+}
+
 func main() {
-	UpChan := make(chan []byte)
-	DoChan := make(chan []byte)
-	go TCPSocket(UpChan, DoChan)
 	// Now that the TCP waiter is setup. lets start the HTTP sevrer
 	m := martini.Classic()
 	// m.Use(EnforceHTTPAuth)
@@ -20,16 +23,37 @@ func main() {
 	m.Run()
 }
 
-func TCPSocket(UpChan chan []byte, DoChan chan []byte) {
-	// To start off the connection we expect there to be a "ping"
-	// on the UpChan.
-	<-UpChan
+func UpPoll(conn net.Conn, UpChan chan []byte) {
+	for {
+		conn.Write(<-UpChan)
+	}
+}
+
+func DownPoll(conn net.Conn, DownChan chan []byte) {
+	for {
+		buf := make([]byte, 25565)
+		n, err := conn.Read(buf)
+		if err != nil {
+			fmt.Errorf("Could not Read!!! %s", err)
+			break
+		} else {
+			DownChan <- buf[:n]
+		}
+	}
+}
+
+func TCPSocket(Session ConnectionSession) {
+	UpChan := Session.UpChan
+	DownChan := Session.DownChan
+
 	// This blocks the first "contact"
 	// and awakes the server up from its terrifying slumber
-	_, err := net.Dial("tcp", "localhost:22")
+	conn, err := net.Dial("tcp", "localhost:22")
 	if err != nil {
 		fmt.Errorf("Could not dial SSH on the localhost, this is a srs issue. %s", err)
 	}
+	go UpPoll(conn, UpChan)
+	go DownPoll(conn, DownChan)
 	/*
 		Okay so you need to first do somthing with that _ up there.
 		I think it will be best to move this to use one chan and just have a struct that can contain stuff
