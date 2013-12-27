@@ -23,12 +23,22 @@ func main() {
 	// m.Map(Sessions)
 	m.Get("/", Welcome)
 	m.Get("/init", StartSession)
+	m.Get("/session/:id", DownLink)
+	m.Post("/session/:id", UpLink)
 	/*
 		Okay so all I need to do now is make a m.get(/uplink/:id) and a post one too to get the data
 		You can apparently stream r.body. you can flush to the output as long as you DONT use martini's
 		fancy way of doing things and just write to the request in raw form.
 	*/
 	m.Run()
+}
+
+func DownLink(rw http.ResponseWriter, req *http.Request, prams *martini.Params) {
+	// This one is where it does down
+}
+
+func UpLink(rw http.ResponseWriter, req *http.Request, prams *martini.Params) {
+	// This one is where it does up
 }
 
 func StartSession(rw http.ResponseWriter, req *http.Request) string {
