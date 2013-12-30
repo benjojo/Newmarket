@@ -62,6 +62,7 @@ func UpLink(rw http.ResponseWriter, req *http.Request, prams martini.Params) {
 	// This one is where it does up
 	SessionObj := GetSessionObject(SessionIDString)
 	b := make([]byte, 25565)
+	SessionObj.UpChan <- b
 	for {
 		n, e := req.Body.Read(b)
 		if e != nil {
