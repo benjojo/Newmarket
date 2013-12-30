@@ -34,17 +34,32 @@ func main() {
 }
 
 func DownLink(rw http.ResponseWriter, req *http.Request, prams martini.Params) {
-	if !DoesSessionExist(fmt.Sprintf("%s", prams["id"])) {
+	SessionIDString := fmt.Sprintf("%s", prams["id"])
+	if !DoesSessionExist(SessionIDString) {
 		http.Error(rw, "That session does not exist.", http.StatusBadRequest)
+		return
 	}
 	// This one is where it does down
+
 }
 
 func UpLink(rw http.ResponseWriter, req *http.Request, prams martini.Params) {
 	if !DoesSessionExist(fmt.Sprintf("%s", prams["id"])) {
 		http.Error(rw, "That session does not exist.", http.StatusBadRequest)
+		return
 	}
 	// This one is where it does up
+}
+
+func GetSessionObject(sessionID string) (Output ConnectionSession) {
+	for _, Sess := range Sessions {
+		if Sess.Token == sessionID {
+			return Sess
+		}
+	}
+	// Basically this should never happen, I'm not sure how to return nil either so
+	// I will have to return what ever the hell "Output" is at this point.
+	return Output
 }
 
 func DoesSessionExist(sessionID string) bool {
