@@ -40,15 +40,36 @@ func DownLink(rw http.ResponseWriter, req *http.Request, prams martini.Params) {
 		return
 	}
 	// This one is where it does down
-
+	SessionObj := GetSessionObject(SessionIDString)
+	for data := range SessionObj.DownChan {
+		_, e := rw.Write(data)
+		if e != nil {
+			fmt.Fprint(rw, "Connection dead :(")
+			return
+		}
+		if f, ok := rw.(http.Flusher); ok {
+			f.Flush()
+		}
+	}
 }
 
 func UpLink(rw http.ResponseWriter, req *http.Request, prams martini.Params) {
-	if !DoesSessionExist(fmt.Sprintf("%s", prams["id"])) {
+	SessionIDString := fmt.Sprintf("%s", prams["id"])
+	if !DoesSessionExist(SessionIDString) {
 		http.Error(rw, "That session does not exist.", http.StatusBadRequest)
 		return
 	}
 	// This one is where it does up
+	SessionObj := GetSessionObject(SessionIDString)
+	b := make([]byte, 25565)
+	for {
+		n, e := req.Body.Read(b)
+		if e != nil {
+			fmt.Println("Uplink down. All is lost")
+			return
+		}
+		SessionObj.UpChan <- b[0:n]
+	}
 }
 
 func GetSessionObject(sessionID string) (Output ConnectionSession) {
