@@ -33,12 +33,27 @@ func main() {
 	m.Run()
 }
 
-func DownLink(rw http.ResponseWriter, req *http.Request, prams *martini.Params) {
+func DownLink(rw http.ResponseWriter, req *http.Request, prams martini.Params) {
+	if !DoesSessionExist(fmt.Sprintf("%s", prams["id"])) {
+		http.Error(rw, "That session does not exist.", http.StatusBadRequest)
+	}
 	// This one is where it does down
 }
 
-func UpLink(rw http.ResponseWriter, req *http.Request, prams *martini.Params) {
+func UpLink(rw http.ResponseWriter, req *http.Request, prams martini.Params) {
+	if !DoesSessionExist(fmt.Sprintf("%s", prams["id"])) {
+		http.Error(rw, "That session does not exist.", http.StatusBadRequest)
+	}
 	// This one is where it does up
+}
+
+func DoesSessionExist(sessionID string) bool {
+	for _, Sess := range Sessions {
+		if Sess.Token == sessionID {
+			return true
+		}
+	}
+	return false
 }
 
 func StartSession(rw http.ResponseWriter, req *http.Request) string {
