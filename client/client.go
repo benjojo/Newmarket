@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
+	"io/ioutil"
 	"net"
+	"net/http"
 	"os"
 	"strconv"
 )
@@ -47,5 +49,20 @@ func StartTunnel(URL string, Port string) {
 }
 
 func HandleTunConnection(conn net.Conn, URL string, Port int64) {
+	fmt.Println("Getting a session ID from server...\n")
+	r, e := http.Get(URL + "/init")
+	if e != nil {
+		fmt.Errorf("Unable to get a session!")
+		conn.Close()
+		return
+	}
+	sessdata, e := ioutil.ReadAll(r.Body)
+	if e != nil {
+		fmt.Errorf("Unable to read from the connection to get a session!")
+		conn.Close()
+		return
+	}
+	sessiontoken := string(sessdata)
+	fmt.Println("Session tokean obtained:", sessiontoken)
 
 }
