@@ -64,5 +64,15 @@ func HandleTunConnection(conn net.Conn, URL string, Port int64) {
 	}
 	sessiontoken := string(sessdata)
 	fmt.Println("Session tokean obtained:", sessiontoken)
+	// Okay so we now have our session token.
+	go DialUpWards(URL+"/session/"+sessiontoken, conn)
+	go DialDownWards(URL+"/session/"+sessiontoken, conn)
+}
+
+func DialUpWards(URL string, conn net.Conn) {
+
+}
+
+func DialDownWards(URL string, conn net.Conn) {
 
 }
