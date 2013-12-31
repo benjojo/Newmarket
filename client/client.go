@@ -43,5 +43,9 @@ func StartTunnel(URL string, Port string) {
 		return
 	}
 	// go EchoFunc(conn)
+	HandleTunConnection(conn, URL, i)
+}
+
+func HandleTunConnection(conn net.Conn, URL string, Port int64) {
 
 }
