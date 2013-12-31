@@ -40,13 +40,15 @@ func StartTunnel(URL string, Port string) {
 		return
 	}
 	fmt.Printf("Bound to 0.0.0.0:%d waiting for a connection to proceed\n", i)
-	conn, err := listener.Accept()
-	if err != nil {
-		fmt.Errorf("Error accept incoming connection: %s", err.Error())
-		return
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Errorf("Error accept incoming connection: %s", err.Error())
+			return
+		}
+		go HandleTunConnection(conn, URL, i)
 	}
-	// go EchoFunc(conn)
-	HandleTunConnection(conn, URL, i)
+
 }
 
 func HandleTunConnection(conn net.Conn, URL string, Port int64) {
