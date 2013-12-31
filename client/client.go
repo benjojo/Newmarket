@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
+	"net"
 	"os"
 	"strconv"
 )
@@ -30,4 +31,17 @@ func StartTunnel(URL string, Port string) {
 		fmt.Errorf("The port '%s' is not a valid int. wtf did you put in?!", Port)
 		return
 	}
+	listener, e := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", i))
+	if e != nil {
+		fmt.Errorf("Cannot bind to port 0.0.0.0:%d", i)
+		return
+	}
+	fmt.Printf("Bound to 0.0.0.0:%d waiting for a connection to proceed\n", i)
+	conn, err := listener.Accept()
+	if err != nil {
+		fmt.Errorf("Error accept incoming connection: %s", err.Error())
+		return
+	}
+	// go EchoFunc(conn)
+
 }
