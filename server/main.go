@@ -138,6 +138,7 @@ func TCPSocket(Session ConnectionSession) {
 	conn, err := net.Dial("tcp", "localhost:22")
 	if err != nil {
 		fmt.Errorf("Could not dial SSH on the localhost, this is a srs issue. %s", err)
+		return
 	}
 	go UpPoll(conn, UpChan)
 	go DownPoll(conn, DownChan)
