@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/codegangsta/cli"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -23,4 +24,10 @@ func main() {
 
 func StartTunnel(URL string, Port string) {
 	fmt.Printf("The settings are \n\nURL:%s\nListening Port:%s\n", URL, Port)
+	// First, Lets see if we can bind that port.
+	i, e := strconv.ParseInt(Port, 10, 64)
+	if e != nil {
+		fmt.Errorf("The port '%s' is not a valid int. wtf did you put in?!", Port)
+		return
+	}
 }
