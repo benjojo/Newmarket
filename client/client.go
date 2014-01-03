@@ -21,8 +21,8 @@ func main() {
 	}
 	app.Version = "0.9"
 	app.Flags = []cli.Flag{
-		cli.StringFlag{"url, u", "http://localhost:3000", "the URL of the Newmarket server"},
-		cli.StringFlag{"port, p", "3001", "The port you want to listen on"},
+		cli.StringFlag{"url, u", "http://localhost:3000", "the URL of the Newmarket server", true},
+		cli.StringFlag{"port, p", "3001", "The port you want to listen on", true},
 	}
 	app.Run(os.Args)
 }
