@@ -1,8 +1,8 @@
 package main
 
 import (
+	"../cli"
 	"fmt"
-	"github.com/codegangsta/cli"
 	"io/ioutil"
 	"net"
 	"net/http"

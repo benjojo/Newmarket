@@ -1,0 +1,4 @@
+[submodule "cli"]
+	path = cli
+	url = git@github.com:codegangsta/cli.git
+	branch = f88df0aa5aa5c12b29d33b8b938fc3f5c737
