@@ -73,6 +73,6 @@ Example usage is
 
 then connect on the forwarded port (default is 3001)
 
-`ssh localhost -P 3001`
+`ssh -p 3001 localhost`
 
 Auth like normal and now you are inside your remote server!
