@@ -1,30 +1,20 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"github.com/codegangsta/cli"
 	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	app := cli.NewApp()
-	app.Name = "Newmarket Client"
-	app.Usage = "A Client to the Newmarket HTTP Tunnel server"
-	app.Action = func(c *cli.Context) {
-		fmt.Println("Starting Newmarket client")
-		StartTunnel(c.String("url"), c.String("port"))
-	}
-	app.Version = "0.9"
-	app.Flags = []cli.Flag{
-		cli.StringFlag{"url, u", "http://localhost:3000", "the URL of the Newmarket server"},
-		cli.StringFlag{"port, p", "3001", "The port you want to listen on"},
-	}
-	app.Run(os.Args)
+	url := flag.String("url", "http://localhost:3000", "the URL of the Newmarket server")
+	port := flag.String("port", "3001", "The port you want to listen on")
+	flag.Parse()
+	StartTunnel(*url, *port)
 }
 
 func StartTunnel(URL string, Port string) {
