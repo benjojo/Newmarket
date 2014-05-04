@@ -121,7 +121,7 @@ func DownPoll(conn net.Conn, DownChan chan []byte) {
 		buf := make([]byte, 25565)
 		n, err := conn.Read(buf)
 		if err != nil {
-			fmt.Errorf("Could not Read!!! %s", err)
+			fmt.Errorf("Could not Read!!! %s", err.Error())
 			break
 		} else {
 			DownChan <- buf[:n]
@@ -138,7 +138,7 @@ func TCPSocket(Session ConnectionSession) {
 	// and awakes the server up from its terrifying slumber
 	conn, err := net.Dial("tcp", FwdHost)
 	if err != nil {
-		fmt.Errorf("Could not dial SSH on the localhost, this is a srs issue. %s", err)
+		fmt.Errorf("Could not dial SSH on the localhost, this is a srs issue. %s", err.Error())
 		return
 	}
 	go UpPoll(conn, UpChan)
