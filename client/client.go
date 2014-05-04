@@ -82,13 +82,13 @@ func DialUpWards(URL string, sessiontoken string, conn net.Conn) {
 	for {
 		read, e := conn.Read(buf)
 		if e != nil {
-			fmt.Errorf("Upstream broke down for reason %s", e)
+			fmt.Errorf("Upstream broke down for reason %s", e.Error())
 			conn.Close()
 			return
 		}
 		_, e = conn2.Write(buf[0:read])
 		if e != nil {
-			fmt.Errorf("Tried to write data to remotesocket and it broke: %s", e)
+			fmt.Errorf("Tried to write data to remotesocket and it broke: %s", e.Error())
 			conn.Close()
 			conn2.Close()
 			return
@@ -99,7 +99,7 @@ func DialUpWards(URL string, sessiontoken string, conn net.Conn) {
 func DialDownWards(URL string, conn net.Conn) {
 	r, e := http.Get(URL)
 	if e != nil {
-		fmt.Errorf("Woah wtf, I tried to dial down and I got a error! %s", e)
+		fmt.Errorf("Woah wtf, I tried to dial down and I got a error! %s", e.Error())
 		conn.Close()
 		return
 	}
@@ -107,13 +107,13 @@ func DialDownWards(URL string, conn net.Conn) {
 	for {
 		read, e := r.Body.Read(buf)
 		if e != nil {
-			fmt.Errorf("Downstream broke down for reason %s", e)
+			fmt.Errorf("Downstream broke down for reason %s", e.Error())
 			conn.Close()
 			return
 		}
 		_, e = conn.Write(buf[0:read])
 		if e != nil {
-			fmt.Errorf("Tried to write data to localsocket and it broke: %s", e)
+			fmt.Errorf("Tried to write data to localsocket and it broke: %s", e.Error())
 			conn.Close()
 			return
 		}
