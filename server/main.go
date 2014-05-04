@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/codegangsta/martini"
 	"github.com/nu7hatch/gouuid"
@@ -15,9 +16,15 @@ type ConnectionSession struct {
 }
 
 var Sessions = make([]ConnectionSession, 0)
+var FwdHost string = "localhost:22"
 
 func main() {
-	// Now that the TCP waiter is setup. lets start the HTTP sevrer
+	FwdHostFlag := flag.String("fwdhost", "localhost:22", "host:port as the destination for clients connecting to newmarket.")
+	flag.Parse()
+
+	FwdHost = *FwdHostFlag
+
+	// Now that the TCP waiter is setup. lets start the HTTP server
 	m := martini.Classic()
 	// m.Map(Sessions)
 	m.Get("/", Welcome)
@@ -129,7 +136,7 @@ func TCPSocket(Session ConnectionSession) {
 
 	// This blocks the first "contact"
 	// and awakes the server up from its terrifying slumber
-	conn, err := net.Dial("tcp", "localhost:22")
+	conn, err := net.Dial("tcp", FwdHost)
 	if err != nil {
 		fmt.Errorf("Could not dial SSH on the localhost, this is a srs issue. %s", err)
 		return
