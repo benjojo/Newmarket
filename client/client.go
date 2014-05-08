@@ -13,11 +13,12 @@ import (
 func main() {
 	url := flag.String("url", "http://localhost:3000", "the URL of the Newmarket server")
 	port := flag.String("port", "3001", "The port you want to listen on")
+	bindlocal := flag.Bool("bindlocal", false, "enable to bind only on 127.0.0.1")
 	flag.Parse()
-	StartTunnel(*url, *port)
+	StartTunnel(*url, *port, *bindlocal)
 }
 
-func StartTunnel(URL string, Port string) {
+func StartTunnel(URL string, Port string, BindLocal bool) {
 	fmt.Printf("The settings are \n\nURL:%s\nListening Port:%s\n", URL, Port)
 	// First, Lets see if we can bind that port.
 	i, e := strconv.ParseInt(Port, 10, 64)
@@ -25,12 +26,18 @@ func StartTunnel(URL string, Port string) {
 		fmt.Errorf("The port '%s' is not a valid int. wtf did you put in?!", Port)
 		return
 	}
-	listener, e := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", i))
+	var bindaddr string = "0.0.0.0"
+
+	if BindLocal {
+		bindaddr = "127.0.0.1"
+	}
+
+	listener, e := net.Listen("tcp", fmt.Sprintf("%s:%d", bindaddr, i))
 	if e != nil {
-		fmt.Errorf("Cannot bind to port 0.0.0.0:%d", i)
+		fmt.Errorf("Cannot bind to port %s:%d", bindaddr, i)
 		return
 	}
-	fmt.Printf("Bound to 0.0.0.0:%d waiting for a connection to proceed\n", i)
+	fmt.Printf("Bound to %s:%d waiting for a connection to proceed\n", bindaddr, i)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
