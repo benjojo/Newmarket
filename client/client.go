@@ -13,7 +13,7 @@ import (
 func main() {
 	url := flag.String("url", "http://localhost:3000", "the URL of the Newmarket server")
 	port := flag.String("port", "3001", "The port you want to listen on")
-	bindlocal := flag.Bool("bindlocal", false, "enable to bind only on 127.0.0.1")
+	bindlocal := flag.Bool("bindlocal", true, "enable to bind only on 127.0.0.1")
 	flag.Parse()
 	StartTunnel(*url, *port, *bindlocal)
 }
