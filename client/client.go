@@ -78,9 +78,10 @@ func DialUpWards(URL string, sessiontoken string, conn net.Conn) {
 	// NEED TO BE REFACTORED OR HELL, JUST DONE PROPERALLY AND NOT
 	// INSANE LIKE THIS ONE IS.
 	conn2, err := net.Dial("tcp", URL)
+	defer conn.Close()
+	defer conn2.Close()
 	if err != nil {
 		fmt.Errorf("Woah wtf, I tried to dial up and I got a error! %s", err)
-		conn.Close()
 		return
 	}
 	HTTPRequest := fmt.Sprintf("POST /session/%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: Newmarket\r\nContent-Length: 9999999\r\n\r\n", sessiontoken, URL)
@@ -90,14 +91,11 @@ func DialUpWards(URL string, sessiontoken string, conn net.Conn) {
 		read, e := conn.Read(buf)
 		if e != nil {
 			fmt.Errorf("Upstream broke down for reason %s", e.Error())
-			conn.Close()
 			return
 		}
 		_, e = conn2.Write(buf[0:read])
 		if e != nil {
 			fmt.Errorf("Tried to write data to remotesocket and it broke: %s", e.Error())
-			conn.Close()
-			conn2.Close()
 			return
 		}
 	}
