@@ -103,9 +103,9 @@ func DialUpWards(URL string, sessiontoken string, conn net.Conn) {
 
 func DialDownWards(URL string, conn net.Conn) {
 	r, e := http.Get(URL)
+	defer conn.close()
 	if e != nil {
 		fmt.Errorf("Woah wtf, I tried to dial down and I got a error! %s", e.Error())
-		conn.Close()
 		return
 	}
 	buf := make([]byte, 25565)
@@ -113,13 +113,11 @@ func DialDownWards(URL string, conn net.Conn) {
 		read, e := r.Body.Read(buf)
 		if e != nil {
 			fmt.Errorf("Downstream broke down for reason %s", e.Error())
-			conn.Close()
 			return
 		}
 		_, e = conn.Write(buf[0:read])
 		if e != nil {
 			fmt.Errorf("Tried to write data to localsocket and it broke: %s", e.Error())
-			conn.Close()
 			return
 		}
 	}
